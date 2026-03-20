@@ -1,0 +1,516 @@
+/* =====================================================
+   style.css — SplitTrip
+   Paleta verde outdoors, estructura similar a Casillero
+   ===================================================== */
+
+/* ----------------------  Google Fonts ---------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Lato:wght@400;700&display=swap');
+
+/* ----------------------  Paleta (variables) ---------------------- */
+:root {
+  --color-bg:           #f0f7f1;
+  --color-primary:      #2d6a4f;
+  --color-primary-dark: #1a3d2b;
+  --color-secondary:    #52796f;
+  --color-accent:       #d4a017;
+  --color-river:        #74c69d;
+  --color-light:        #d8f3dc;
+  --color-text:         #1a1a1a;
+  --color-white:        #ffffff;
+  --color-border:       #c9e4ca;
+
+  /* Sobreescribe el verde de Bootstrap */
+  --bs-primary:         #2d6a4f;
+  --bs-primary-rgb:     45, 106, 79;
+}
+
+/* ----------------------  Base ---------------------- */
+body {
+  font-family: 'Lato', system-ui, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+h1, h2, h3, h4, h5,
+.navbar-brand,
+.btn {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* ----------------------  Topbar ---------------------- */
+.topbar {
+  background: var(--color-primary-dark);
+  color: #fff;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+}
+.topbar a {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+/* ----------------------  Navbar ---------------------- */
+.brand-icon {
+  width: 38px;
+  height: 38px;
+  background: var(--color-primary);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  overflow: hidden;
+}
+.brand-name {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--color-primary-dark);
+  line-height: 1.1;
+}
+.brand-name span {
+  color: var(--color-secondary);
+  font-weight: 400;
+  font-size: 0.73rem;
+  display: block;
+}
+
+/* ----------------------  Hero con paisaje ---------------------- */
+.hero-new {
+  position: relative;
+  overflow: hidden;
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-new .container {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(26, 61, 43, 0.72) 0%,
+    rgba(45, 106, 79, 0.45) 60%,
+    rgba(82, 121, 111, 0.20) 100%
+  );
+  z-index: 1;
+}
+
+.hero-badge {
+  background: var(--color-accent);
+  color: var(--color-primary-dark);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 20px;
+}
+
+.hero-stat strong {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--color-accent);
+}
+.hero-stat span {
+  font-size: 0.82rem;
+  opacity: 0.85;
+  color: #fff;
+}
+
+/* ----------------------  Sección labels/headings ---------------------- */
+.section-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  margin-bottom: 6px;
+}
+.section-heading {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--color-primary-dark);
+}
+
+/* ----------------------  Cards de pasos ---------------------- */
+.step-card {
+  border-radius: 14px !important;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+  border-color: var(--color-border) !important;
+}
+.step-num {
+  width: 44px;
+  height: 44px;
+  background: var(--color-primary);
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.step-icon { font-size: 1.6rem; }
+
+/* ----------------------  Cards generales ---------------------- */
+.service-card {
+  border-radius: 14px !important;
+  border-color: var(--color-border) !important;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+.service-card:hover {
+  box-shadow: 0 8px 24px rgba(45,106,79,0.12);
+  transform: translateY(-2px);
+}
+.service-icon { font-size: 1.8rem; margin-bottom: 8px; display: block; }
+
+/* ----------------------  Bootstrap overrides ---------------------- */
+.btn-primary {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+.btn-primary:hover {
+  background-color: var(--color-primary-dark) !important;
+  border-color: var(--color-primary-dark) !important;
+}
+.btn-outline-primary {
+  color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+.btn-outline-primary:hover {
+  background-color: var(--color-primary) !important;
+  color: #fff !important;
+}
+.text-primary { color: var(--color-primary) !important; }
+
+/* ----------------------  Inputs oscuros ---------------------- */
+.input-dark {
+  background-color: var(--color-primary-dark) !important;
+  color: #fff !important;
+  border-color: var(--color-primary) !important;
+}
+.input-dark::placeholder { color: #a8d5ba !important; }
+.input-dark:focus {
+  background-color: var(--color-primary-dark) !important;
+  color: #fff !important;
+  box-shadow: 0 0 0 0.25rem rgba(45,106,79,0.35) !important;
+}
+select.input-dark option {
+  background-color: var(--color-primary-dark);
+  color: #fff;
+}
+
+.hint {
+  font-size: 0.88rem;
+  color: #5a7a62;
+}
+
+.resultado-box {
+  background-color: var(--color-primary-dark);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 10px;
+  min-height: 45px;
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+/* ----------------------  CTA Banner ---------------------- */
+.cta-banner {
+  background: linear-gradient(120deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+}
+
+/* ----------------------  Footer ---------------------- */
+.site-footer {
+  background: var(--color-primary-dark);
+  color: rgba(255,255,255,0.7);
+  font-size: 0.87rem;
+}
+.footer-col-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  color: #fff;
+  font-size: 0.88rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.footer-link {
+  color: rgba(255,255,255,0.65);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.footer-link:hover { color: var(--color-accent); }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.4);
+  font-size: 0.8rem;
+}
+
+/* ----------------------  Registro / Login ---------------------- */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #e0f0e5 0%, #f0f7f1 100%);
+}
+.auth-main { flex: 1; }
+
+.auth-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--color-primary);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin: 0 auto;
+}
+
+.auth-card {
+  border-radius: 16px !important;
+  border-color: var(--color-border) !important;
+}
+
+.btn-toggle-password {
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  padding: 0 14px;
+  border-radius: 0 8px 8px 0 !important;
+  font-size: 1rem;
+  transition: background 0.15s;
+}
+.btn-toggle-password:hover {
+  background: var(--color-primary-dark);
+  color: #fff;
+}
+
+/* ----------------------  Dashboard ---------------------- */
+.dashboard-saludo {
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.dashboard-banner {
+  background: linear-gradient(120deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+  border-radius: 14px;
+  padding: 24px 28px;
+}
+
+.dashboard-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 28px 22px;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s, transform 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dashboard-card:hover {
+  box-shadow: 0 10px 28px rgba(45,106,79,0.13);
+  transform: translateY(-3px);
+}
+.dashboard-card-highlight {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.dashboard-card-highlight .dashboard-card-title,
+.dashboard-card-highlight .dashboard-card-desc,
+.dashboard-card-highlight .dashboard-card-link {
+  color: #fff !important;
+}
+
+.dashboard-card-icon { font-size: 2.2rem; line-height: 1; }
+.dashboard-card-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--color-primary-dark);
+  margin: 0;
+}
+.dashboard-card-desc {
+  font-size: 0.87rem;
+  color: #5a7a62;
+  margin: 0;
+  line-height: 1.5;
+  flex: 1;
+}
+.dashboard-card-link {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-top: auto;
+}
+
+/* ----------------------  Viaje card ---------------------- */
+.viaje-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 14px;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+.viaje-card:hover {
+  box-shadow: 0 8px 24px rgba(45,106,79,0.10);
+  transform: translateY(-2px);
+}
+
+/* ----------------------  Gasto card ---------------------- */
+.gasto-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  transition: box-shadow 0.15s;
+}
+.gasto-card:hover {
+  box-shadow: 0 4px 14px rgba(45,106,79,0.09);
+}
+
+.gasto-label {
+  font-size: 0.78rem;
+  color: #6c9477;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.gasto-valor {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--color-text);
+  margin-bottom: 0;
+}
+
+/* ----------------------  Badges de estado ---------------------- */
+.badge-estado {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+  white-space: nowrap;
+}
+.badge-activo    { background: #d8f3dc; color: #1a3d2b; }
+.badge-pendiente { background: #fff3cd; color: #856404; }
+.badge-cerrado   { background: #e2e8e4; color: #3d5247; }
+.badge-pagado    { background: #d1e7dd; color: #0a3622; }
+.badge-deuda     { background: #fde8d8; color: #7a3010; }
+
+/* ----------------------  Botones de filtro ---------------------- */
+.btn-filtro {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: 20px;
+  padding: 6px 18px;
+  font-size: 0.85rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+.btn-filtro:hover {
+  background: #e8f5eb;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+.btn-filtro.activo {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+/* ----------------------  Balance card ---------------------- */
+.balance-banner {
+  background: linear-gradient(120deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+  border-radius: 14px;
+  padding: 22px 24px;
+}
+
+.balance-item {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  transition: box-shadow 0.15s;
+}
+.balance-item:hover {
+  box-shadow: 0 4px 12px rgba(45,106,79,0.08);
+}
+.balance-item:last-child { margin-bottom: 0; }
+
+/* ----------------------  Perfil / Cuenta ---------------------- */
+.cuenta-perfil-header {
+  background: linear-gradient(120deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+  border-radius: 14px;
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.cuenta-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-primary-dark);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ----------------------  Invitación ---------------------- */
+.invitacion-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #e0f0e5 0%, #f0f7f1 100%);
+}
+.invitacion-card {
+  border-radius: 20px !important;
+  border-color: var(--color-border) !important;
+  box-shadow: 0 8px 32px rgba(45,106,79,0.10) !important;
+}
+
+/* ----------------------  Spinner ---------------------- */
+.spinner-border.text-primary {
+  color: var(--color-primary) !important;
+}

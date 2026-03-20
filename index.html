@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SplitTrip — Divide gastos, viaja sin preocupaciones</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Estilos propios -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Topbar -->
+  <div class="topbar text-center py-2 px-3">
+    🌿 ¡Tu primer viaje grupal sin líos de dinero! &nbsp;
+    <a href="registro.html">Regístrate gratis</a>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm sticky-top">
+    <div class="container">
+
+      <!-- Brand / Logo -->
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+        <div class="brand-icon" style="background:var(--color-primary);padding:3px;">
+          <img src="logo-bear-dark.png" alt="SplitTrip logo" style="width:32px;height:32px;object-fit:contain;border-radius:6px;filter:invert(1);">
+        </div>
+        <div class="brand-name">
+          SplitTrip
+          <span>Divide · Viaja · Disfruta</span>
+        </div>
+      </a>
+
+      <!-- Hamburguesa -->
+      <button class="navbar-toggler" type="button"
+        data-bs-toggle="collapse" data-bs-target="#mainNav"
+        aria-controls="mainNav" aria-expanded="false" aria-label="Abrir menú">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Links -->
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+          <li class="nav-item"><a class="nav-link fw-semibold" href="#como-funciona">Cómo funciona</a></li>
+          <li class="nav-item"><a class="nav-link fw-semibold" href="#caracteristicas">Características</a></li>
+          <li class="nav-item"><a class="nav-link fw-semibold" href="#faq">FAQ</a></li>
+          <li class="nav-item">
+            <a class="btn btn-outline-primary btn-sm px-3" href="login.html">Iniciar sesión</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-primary btn-sm px-3 text-white" href="registro.html">Registrarse gratis</a>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- Hero con paisaje SVG -->
+  <section class="hero-new text-white" style="min-height:560px;">
+
+    <!-- Paisaje SVG de fondo -->
+    <div class="hero-bg" style="position:absolute;inset:0;z-index:0;">
+      <svg width="100%" height="100%" viewBox="0 0 1200 560" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hsky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"  stop-color="#a8d5ba"/>
+            <stop offset="55%" stop-color="#c9e8d0"/>
+            <stop offset="100%" stop-color="#e2f3e6"/>
+          </linearGradient>
+          <linearGradient id="hsun" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#ffe066"/>
+            <stop offset="100%" stop-color="#f9c74f"/>
+          </linearGradient>
+          <linearGradient id="hriv" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#74c69d" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#52b788" stop-opacity="0.7"/>
+          </linearGradient>
+        </defs>
+        <!-- Cielo -->
+        <rect width="1200" height="560" fill="url(#hsky)"/>
+        <!-- Sol halo -->
+        <circle cx="140" cy="100" r="60" fill="#ffe066" opacity="0.18"/>
+        <!-- Sol -->
+        <circle cx="140" cy="100" r="42" fill="url(#hsun)" opacity="0.95"/>
+        <!-- Rayos -->
+        <g stroke="#f9c74f" stroke-width="2" stroke-linecap="round" opacity="0.55">
+          <line x1="140" y1="46"  x2="140" y2="36"/>
+          <line x1="140" y1="154" x2="140" y2="164"/>
+          <line x1="86"  y1="100" x2="76"  y2="100"/>
+          <line x1="194" y1="100" x2="204" y2="100"/>
+          <line x1="102" y1="62"  x2="94"  y2="54"/>
+          <line x1="178" y1="138" x2="186" y2="146"/>
+          <line x1="178" y1="62"  x2="186" y2="54"/>
+          <line x1="102" y1="138" x2="94"  y2="146"/>
+        </g>
+        <!-- Nube 1 -->
+        <ellipse cx="420" cy="80"  rx="90" ry="28" fill="white" opacity="0.85"/>
+        <ellipse cx="374" cy="94"  rx="52" ry="22" fill="white" opacity="0.80"/>
+        <ellipse cx="468" cy="94"  rx="58" ry="21" fill="white" opacity="0.80"/>
+        <ellipse cx="420" cy="102" rx="104" ry="18" fill="white" opacity="0.72"/>
+        <!-- Nube 2 -->
+        <ellipse cx="860" cy="64"  rx="72" ry="22" fill="white" opacity="0.78"/>
+        <ellipse cx="822" cy="76"  rx="42" ry="17" fill="white" opacity="0.72"/>
+        <ellipse cx="898" cy="76"  rx="50" ry="17" fill="white" opacity="0.72"/>
+        <ellipse cx="860" cy="82"  rx="82" ry="14" fill="white" opacity="0.64"/>
+        <!-- Nube 3 -->
+        <ellipse cx="1080" cy="110" rx="60" ry="20" fill="white" opacity="0.70"/>
+        <ellipse cx="1046" cy="122" rx="36" ry="15" fill="white" opacity="0.65"/>
+        <ellipse cx="1114" cy="122" rx="42" ry="15" fill="white" opacity="0.65"/>
+        <!-- Pájaros -->
+        <path d="M260 130 Q264 124 268 130 Q272 124 276 130" fill="none" stroke="#1a3d2b" stroke-width="2"   stroke-linecap="round" opacity="0.55"/>
+        <path d="M282 120 Q285 115 288 120 Q291 115 294 120" fill="none" stroke="#1a3d2b" stroke-width="1.6" stroke-linecap="round" opacity="0.48"/>
+        <path d="M246 140 Q249 135 252 140 Q255 135 258 140" fill="none" stroke="#1a3d2b" stroke-width="1.5" stroke-linecap="round" opacity="0.42"/>
+        <path d="M700 78  Q703 73  706 78  Q709 73  712 78"  fill="none" stroke="#2d6a4f" stroke-width="1.8" stroke-linecap="round" opacity="0.50"/>
+        <path d="M718 86  Q721 82  723 86  Q725 82  728 86"  fill="none" stroke="#2d6a4f" stroke-width="1.4" stroke-linecap="round" opacity="0.42"/>
+        <path d="M990 92  Q993 88  995 92  Q997 88  1000 92" fill="none" stroke="#52796f" stroke-width="1.4" stroke-linecap="round" opacity="0.38"/>
+        <path d="M1006 100 Q1008 97 1010 100 Q1012 97 1014 100" fill="none" stroke="#52796f" stroke-width="1.2" stroke-linecap="round" opacity="0.32"/>
+        <!-- Montañas lejanas -->
+        <path d="M0 360 L100 250 L200 300 L350 180 L500 270 L640 200 L760 255 L900 175 L1040 240 L1150 195 L1200 220 L1200 560 L0 560Z" fill="#7fad8e" opacity="0.38"/>
+        <!-- Montañas medias -->
+        <path d="M0 400 L80 310 L180 345 L310 255 L430 320 L560 272 L680 315 L800 268 L930 310 L1060 270 L1160 300 L1200 285 L1200 560 L0 560Z" fill="#52796f" opacity="0.52"/>
+        <!-- Nieve en picos -->
+        <path d="M350 180 L370 205 L330 205Z" fill="white" opacity="0.50"/>
+        <path d="M640 200 L658 222 L622 222Z" fill="white" opacity="0.44"/>
+        <path d="M900 175 L918 198 L882 198Z" fill="white" opacity="0.40"/>
+        <!-- Montañas cercanas -->
+        <path d="M0 440 L90 375 L190 404 L310 352 L420 390 L550 362 L660 392 L780 368 L890 396 L1020 370 L1120 392 L1200 376 L1200 560 L0 560Z" fill="#2d6a4f" opacity="0.70"/>
+        <!-- Pinos izquierda -->
+        <g fill="#1a3d2b" opacity="0.55">
+          <polygon points="0,560 16,510 32,560"/>
+          <polygon points="24,560 40,500 56,560"/>
+          <polygon points="48,560 66,492 84,560"/>
+          <polygon points="72,560 90,504 108,560"/>
+        </g>
+        <!-- Pinos derecha -->
+        <g fill="#1a3d2b" opacity="0.55">
+          <polygon points="1092,560 1108,510 1124,560"/>
+          <polygon points="1116,560 1132,502 1148,560"/>
+          <polygon points="1140,560 1158,496 1176,560"/>
+          <polygon points="1164,560 1182,508 1200,560"/>
+        </g>
+        <!-- Río -->
+        <path d="M0 532 Q150 512 280 526 Q420 540 560 516 Q700 492 840 514 Q980 536 1100 516 L1200 522 L1200 560 L0 560Z" fill="url(#hriv)" opacity="0.72"/>
+        <path d="M60 528 Q200 514 340 524 Q480 534 600 514 Q720 496 840 514" fill="none" stroke="#b7e4c7" stroke-width="2.5" opacity="0.50" stroke-linecap="round"/>
+        <path d="M700 516 Q840 530 980 514 Q1080 504 1160 516" fill="none" stroke="#b7e4c7" stroke-width="1.5" opacity="0.38" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <!-- Overlay oscuro -->
+    <div class="hero-overlay"></div>
+
+    <!-- Contenido hero -->
+    <div class="container py-5" style="position:relative;z-index:2;">
+      <div class="row align-items-center">
+
+        <!-- Texto izquierda -->
+        <div class="col-12 col-lg-6 py-4">
+          <span class="hero-badge mb-3 d-inline-block">🌿 Viajes grupales sin estrés</span>
+          <h1 class="display-5 fw-bold mb-3">
+            Divide gastos,<br>viaja sin cuentas<br>pendientes
+          </h1>
+          <p class="lead mb-4 opacity-90">
+            Crea un viaje, invita a tus amigos y lleva el control de quién pagó qué. SplitTrip calcula automáticamente quién le debe a quién.
+          </p>
+          <div class="d-flex gap-3 flex-wrap">
+            <a href="registro.html" class="btn btn-warning fw-bold px-4 py-2">
+              Crear viaje gratis →
+            </a>
+            <a href="#como-funciona" class="btn btn-outline-light px-4 py-2">
+              Cómo funciona
+            </a>
+          </div>
+        </div>
+
+        <!-- Logo grande derecha -->
+        <div class="col-12 col-lg-6 d-flex justify-content-center align-items-center py-4">
+          <div style="text-align:center;">
+            <!-- Imagen del oso sin recuadro, negro puro con fondo transparente -->
+          <div style="position:relative; display:inline-block;">
+            <img src="logo-bear-dark.png" alt="SplitTrip Bear"
+              style="
+                width: 340px;
+                max-width: 100%;
+                display: block;
+                margin: 0 auto;
+                margin-bottom: -28px;
+              ">
+            <!-- Texto pegado al oso -->
+            <div style="text-align:center; position:relative; z-index:2;">
+              <!-- Línea dorada -->
+              <div style="height:2px;background:linear-gradient(90deg,transparent,#d4a017,transparent);margin-bottom:8px;width:220px;margin-left:auto;margin-right:auto;"></div>
+              <!-- Nombre -->
+              <div style="
+                font-family:'Montserrat',sans-serif;
+                font-weight:900;
+                font-size:1.9rem;
+                color:#a8d8f0;
+                letter-spacing:3px;
+                text-shadow: 0 2px 14px rgba(26,61,43,0.6);
+                margin-bottom:3px;
+              ">SplitTrip</div>
+              <!-- Tagline -->
+              <div style="
+                font-family:'Montserrat',sans-serif;
+                font-weight:700;
+                font-size:0.65rem;
+                color:#7ec8e3;
+                letter-spacing:3.5px;
+                text-transform:uppercase;
+              ">DIVIDE · VIAJA · DISFRUTA</div>
+            </div>
+          </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Stats -->
+      <div class="row justify-content-center g-4 mt-2">
+        <div class="col-6 col-sm-3">
+          <div class="hero-stat text-center">
+            <strong>100%</strong>
+            <span>División exacta</span>
+          </div>
+        </div>
+        <div class="col-6 col-sm-3">
+          <div class="hero-stat text-center">
+            <strong>∞</strong>
+            <span>Integrantes por viaje</span>
+          </div>
+        </div>
+        <div class="col-6 col-sm-3">
+          <div class="hero-stat text-center">
+            <strong>$0</strong>
+            <span>Costo de registro</span>
+          </div>
+        </div>
+        <div class="col-6 col-sm-3">
+          <div class="hero-stat text-center">
+            <strong>24/7</strong>
+            <span>Acceso en línea</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cómo funciona -->
+  <section class="py-5" id="como-funciona">
+    <div class="container">
+      <p class="section-label text-center">Proceso simple</p>
+      <h2 class="section-heading text-center mb-5">¿Cómo funciona?</h2>
+      <div class="row g-4">
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="card h-100 text-center p-3 border step-card">
+            <div class="step-num mx-auto mb-3">1</div>
+            <div class="step-icon">✈️</div>
+            <h4 class="fw-bold fs-6 mt-2">Crea tu viaje</h4>
+            <p class="text-muted small">Regístrate, crea un viaje y obtén un link de invitación para tu grupo.</p>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="card h-100 text-center p-3 border step-card">
+            <div class="step-num mx-auto mb-3">2</div>
+            <div class="step-icon">👥</div>
+            <h4 class="fw-bold fs-6 mt-2">Invita a tu grupo</h4>
+            <p class="text-muted small">Comparte el link con tus compañeros de viaje para que se unan.</p>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="card h-100 text-center p-3 border step-card">
+            <div class="step-num mx-auto mb-3">3</div>
+            <div class="step-icon">💸</div>
+            <h4 class="fw-bold fs-6 mt-2">Registra gastos</h4>
+            <p class="text-muted small">Cada quien agrega los gastos que pagó y SplitTrip los divide automáticamente.</p>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="card h-100 text-center p-3 border step-card">
+            <div class="step-num mx-auto mb-3">4</div>
+            <div class="step-icon">✅</div>
+            <h4 class="fw-bold fs-6 mt-2">Salda cuentas</h4>
+            <p class="text-muted small">Ve exactamente quién le debe a quién y por cuánto. Sin discusiones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- Características -->
+  <section class="py-5" id="caracteristicas">
+    <div class="container">
+      <p class="section-label text-center">Lo que ofrecemos</p>
+      <h2 class="section-heading text-center mb-5">Todo lo que necesitas para viajar en grupo</h2>
+      <div class="row g-4">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="card h-100 p-3 border service-card">
+            <div class="service-icon">⚡</div>
+            <h4 class="fw-bold fs-6 mt-2">División automática</h4>
+            <p class="text-muted small">Ingresa el gasto y SplitTrip divide el monto equitativamente entre todos los integrantes.</p>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="card h-100 p-3 border service-card">
+            <div class="service-icon">📊</div>
+            <h4 class="fw-bold fs-6 mt-2">Balance en tiempo real</h4>
+            <p class="text-muted small">Consulta en cualquier momento cuánto debe cada persona y quién está al día.</p>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="card h-100 p-3 border service-card">
+            <div class="service-icon">🔗</div>
+            <h4 class="fw-bold fs-6 mt-2">Invitación por link</h4>
+            <p class="text-muted small">Comparte un link único para que tus amigos se unan al viaje con un solo clic.</p>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="card h-100 p-3 border service-card">
+            <div class="service-icon">🗂️</div>
+            <h4 class="fw-bold fs-6 mt-2">Categorías de gasto</h4>
+            <p class="text-muted small">Organiza los gastos por categoría: hospedaje, comida, transporte, actividades y más.</p>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="card h-100 p-3 border service-card">
+            <div class="service-icon">👁️</div>
+            <h4 class="fw-bold fs-6 mt-2">Visibilidad total</h4>
+            <p class="text-muted small">Todos los integrantes pueden ver todos los gastos del viaje. Transparencia absoluta.</p>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="card h-100 p-3 border service-card">
+            <div class="service-icon">📱</div>
+            <h4 class="fw-bold fs-6 mt-2">Desde cualquier dispositivo</h4>
+            <p class="text-muted small">Funciona perfecto en celular, tablet o computadora. Sin apps que instalar.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- FAQ -->
+  <section class="py-5" id="faq">
+    <div class="container">
+      <p class="section-label text-center">Preguntas frecuentes</p>
+      <h2 class="section-heading text-center mb-5">¿Tienes dudas?</h2>
+      <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+          <div class="accordion" id="accordionFAQ">
+
+            <div class="accordion-item border mb-2" style="border-radius:12px!important;border-color:var(--color-border)!important;overflow:hidden;">
+              <h2 class="accordion-header">
+                <button class="accordion-button fw-semibold collapsed" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#faq1">
+                  ¿Cómo se calcula quién le debe a quién?
+                </button>
+              </h2>
+              <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
+                <div class="accordion-body text-muted small">
+                  SplitTrip suma todos los gastos del viaje y calcula la parte proporcional de cada integrante. Si alguien pagó más de lo que le corresponde, los demás le deben la diferencia. El sistema minimiza el número de transferencias necesarias.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item border mb-2" style="border-radius:12px!important;border-color:var(--color-border)!important;overflow:hidden;">
+              <h2 class="accordion-header">
+                <button class="accordion-button fw-semibold collapsed" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#faq2">
+                  ¿Mis amigos necesitan crear una cuenta?
+                </button>
+              </h2>
+              <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
+                <div class="accordion-body text-muted small">
+                  Sí, cada integrante necesita registrarse con su correo y contraseña. Así todos tienen acceso al viaje, pueden ver los gastos y marcar sus pagos como completados.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item border mb-2" style="border-radius:12px!important;border-color:var(--color-border)!important;overflow:hidden;">
+              <h2 class="accordion-header">
+                <button class="accordion-button fw-semibold collapsed" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#faq3">
+                  ¿Puedo tener varios viajes activos al mismo tiempo?
+                </button>
+              </h2>
+              <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
+                <div class="accordion-body text-muted small">
+                  Sí, puedes crear y participar en tantos viajes como quieras simultáneamente. Cada viaje tiene su propio registro de gastos y balance independiente.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item border mb-2" style="border-radius:12px!important;border-color:var(--color-border)!important;overflow:hidden;">
+              <h2 class="accordion-header">
+                <button class="accordion-button fw-semibold collapsed" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#faq4">
+                  ¿SplitTrip maneja los pagos entre personas?
+                </button>
+              </h2>
+              <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
+                <div class="accordion-body text-muted small">
+                  No, SplitTrip es una herramienta de registro y cálculo. Los pagos entre personas se realizan por los medios que el grupo prefiera (Sinpe, efectivo, transferencia, etc.). SplitTrip solo lleva el registro de quién pagó y calcula los balances.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <div class="container py-5">
+    <div class="cta-banner text-center text-white rounded-4 p-5">
+      <h3 class="fw-bold fs-4 mb-2">¿Listo para tu próximo viaje sin líos?</h3>
+      <p class="mb-4 opacity-90">Crea tu cuenta gratis y empieza a organizar los gastos de tu grupo hoy.</p>
+      <a href="registro.html" class="btn btn-warning fw-bold px-4 py-2">Crear cuenta gratis →</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container py-5">
+      <div class="row g-4">
+        <div class="col-12 col-lg-5">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="brand-icon">🐻</div>
+            <div class="brand-name" style="color:white">
+              SplitTrip
+              <span style="color:var(--color-river)">Divide · Viaja · Disfruta</span>
+            </div>
+          </div>
+          <p class="text-white-50 small">La forma más fácil de dividir gastos cuando viajas con amigos o familia.</p>
+        </div>
+        <div class="col-6 col-lg-3">
+          <h5 class="footer-col-title">Navegación</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a href="#como-funciona" class="footer-link">Cómo funciona</a></li>
+            <li class="mb-2"><a href="#caracteristicas" class="footer-link">Características</a></li>
+            <li class="mb-2"><a href="#faq" class="footer-link">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-lg-3">
+          <h5 class="footer-col-title">Cuenta</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a href="login.html" class="footer-link">Iniciar sesión</a></li>
+            <li class="mb-2"><a href="registro.html" class="footer-link">Registrarse gratis</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom text-center py-3">
+      © 2026 SplitTrip — Todos los derechos reservados
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Lógica principal -->
+  <script src="main.js"></script>
+
+</body>
+</html>

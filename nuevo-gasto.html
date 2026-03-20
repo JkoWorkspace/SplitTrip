@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nuevo Gasto — SplitTrip</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Estilos propios -->
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .factura-preview {
+      width: 100%;
+      max-height: 220px;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid var(--color-border);
+      background: var(--color-primary-dark);
+      display: none;
+      margin-top: 10px;
+    }
+    .upload-area {
+      border: 2px dashed var(--color-primary);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s;
+      background: rgba(45,106,79,0.04);
+    }
+    .upload-area:hover {
+      background: rgba(45,106,79,0.09);
+    }
+    .upload-area.tiene-imagen {
+      border-color: var(--color-river);
+      background: rgba(116,198,157,0.08);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+        <div class="brand-icon">
+          <img src="logo-bear-dark.png" alt="SplitTrip" style="width:32px;height:32px;object-fit:contain;filter:invert(1);">
+        </div>
+        <div class="brand-name">
+          SplitTrip
+          <span>Divide · Viaja · Disfruta</span>
+        </div>
+      </a>
+      <button class="navbar-toggler" type="button"
+        data-bs-toggle="collapse" data-bs-target="#mainNav"
+        aria-controls="mainNav" aria-expanded="false" aria-label="Abrir menú">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+          <li class="nav-item"><a class="nav-link fw-semibold" id="linkVolverViaje" href="dashboard.html">← Volver al viaje</a></li>
+          <li class="nav-item">
+            <button class="btn btn-outline-danger btn-sm px-3" id="btnCerrarSesion">Cerrar sesión</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Encabezado -->
+  <div class="dashboard-saludo py-4">
+    <div class="container">
+      <h2 class="fw-bold mb-0">Agregar gasto 💸</h2>
+      <p class="text-muted mb-0 mt-1" id="subtituloViaje">Registra un gasto del viaje</p>
+    </div>
+  </div>
+
+  <main class="py-4">
+    <div class="container">
+      <div class="row g-4 justify-content-center">
+
+        <!-- Formulario -->
+        <div class="col-12 col-lg-7">
+          <div class="card border shadow-sm auth-card">
+            <div class="card-body p-4">
+
+              <h5 class="fw-bold mb-4" style="color:var(--color-primary-dark)">📋 Datos del gasto</h5>
+
+              <form id="formNuevoGasto" novalidate>
+
+                <!-- Descripción -->
+                <div class="mb-3">
+                  <label for="descripcion" class="form-label fw-semibold">
+                    Descripción <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control input-dark"
+                    id="descripcion"
+                    placeholder="Ej: Cena en restaurante La Cascada"
+                    required
+                    maxlength="255"
+                  >
+                  <div class="invalid-feedback">Por favor describe el gasto.</div>
+                </div>
+
+                <!-- Monto -->
+                <div class="mb-3">
+                  <label for="monto" class="form-label fw-semibold">
+                    Monto <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-dark text-white border-0 fw-bold" id="simboloMoneda">$</span>
+                    <input
+                      type="number"
+                      class="form-control input-dark"
+                      id="monto"
+                      placeholder="0.00"
+                      step="0.01"
+                      min="0.01"
+                      required
+                    >
+                  </div>
+                  <div class="invalid-feedback d-block" id="errorMonto"></div>
+                  <!-- Preview división -->
+                  <div id="previewDivision" class="hint mt-2 d-none">
+                    💡 Cada uno de los <strong id="numIntegrantes">0</strong> integrantes pagará:
+                    <strong id="montoPorPersona" style="color:var(--color-primary)">—</strong>
+                  </div>
+                </div>
+
+                <!-- Categoría -->
+                <div class="mb-3">
+                  <label for="categoria" class="form-label fw-semibold">
+                    Categoría <span class="text-danger">*</span>
+                  </label>
+                  <select class="form-select input-dark" id="categoria" required>
+                    <option value="general">📦 General</option>
+                    <option value="hospedaje">🏨 Hospedaje</option>
+                    <option value="comida">🍽️ Comida</option>
+                    <option value="transporte">🚗 Transporte</option>
+                    <option value="actividades">🎯 Actividades</option>
+                    <option value="compras">🛍️ Compras</option>
+                  </select>
+                </div>
+
+                <!-- Fecha -->
+                <div class="mb-3">
+                  <label for="fecha" class="form-label fw-semibold">
+                    Fecha <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    class="form-control input-dark"
+                    id="fecha"
+                    required
+                  >
+                </div>
+
+                <!-- ¿Quién pagó? -->
+                <div class="mb-4">
+                  <label for="pagador" class="form-label fw-semibold">
+                    ¿Quién pagó? <span class="text-danger">*</span>
+                  </label>
+                  <select class="form-select input-dark" id="pagador" required>
+                    <option value="" disabled selected>Cargando integrantes...</option>
+                  </select>
+                  <p class="hint mt-1">Por defecto eres tú, pero puedes cambiarlo.</p>
+                </div>
+
+                <!-- Factura (imagen) -->
+                <div class="mb-4">
+                  <label class="form-label fw-semibold">
+                    Factura o comprobante
+                    <span class="text-muted fw-normal">(opcional)</span>
+                  </label>
+
+                  <div class="upload-area" id="uploadArea" onclick="document.getElementById('facturaInput').click()">
+                    <div id="uploadTexto">
+                      <div style="font-size:2rem;">📷</div>
+                      <p class="mb-1 fw-semibold small" style="color:var(--color-primary)">Toca para subir una foto</p>
+                      <p class="mb-0 text-muted" style="font-size:0.78rem;">JPG, PNG o PDF · Máx. 5MB</p>
+                    </div>
+                    <div id="uploadNombre" class="d-none">
+                      <div style="font-size:1.5rem;">✅</div>
+                      <p class="mb-0 fw-semibold small" style="color:var(--color-primary)" id="nombreArchivo"></p>
+                    </div>
+                  </div>
+
+                  <input
+                    type="file"
+                    id="facturaInput"
+                    accept="image/jpeg,image/png,image/webp,application/pdf"
+                    style="display:none;"
+                  >
+
+                  <!-- Preview de la imagen -->
+                  <img id="facturaPreview" class="factura-preview" alt="Preview factura">
+
+                  <!-- Botón quitar imagen -->
+                  <button type="button" class="btn btn-sm btn-outline-danger mt-2 d-none" id="btnQuitarFactura">
+                    ✕ Quitar imagen
+                  </button>
+                </div>
+
+                <!-- Botón submit -->
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" id="btnGuardarGasto">
+                  Guardar gasto
+                </button>
+
+              </form>
+
+              <!-- Mensaje resultado -->
+              <div id="mensajeGasto" class="mt-3"></div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel lateral: resumen del viaje -->
+        <div class="col-12 col-lg-4">
+          <div class="card border shadow-sm auth-card">
+            <div class="card-body p-4">
+              <h5 class="fw-bold mb-3" style="color:var(--color-primary-dark)">📊 Resumen del viaje</h5>
+
+              <div id="spinnerResumen" class="text-center py-3">
+                <div class="spinner-border spinner-border-sm text-primary"></div>
+              </div>
+
+              <div id="resumenViaje" class="d-none">
+                <div class="dashboard-banner rounded-3 p-3 mb-3">
+                  <p class="text-white-50 small mb-1 text-uppercase fw-bold">Total acumulado</p>
+                  <p class="text-white fw-bold fs-4 mb-0" id="resumenTotal">—</p>
+                </div>
+                <div class="mb-2">
+                  <p class="gasto-label">Integrantes</p>
+                  <p class="gasto-valor" id="resumenIntegrantes">—</p>
+                </div>
+                <div class="mb-2">
+                  <p class="gasto-label">Gastos registrados</p>
+                  <p class="gasto-valor" id="resumenNumGastos">—</p>
+                </div>
+                <div>
+                  <p class="gasto-label">Promedio por persona</p>
+                  <p class="gasto-valor fw-bold" id="resumenPromedio" style="color:var(--color-primary)">—</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer mt-5">
+    <div class="footer-bottom text-center py-3">
+      © 2026 SplitTrip — Todos los derechos reservados
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Lógica -->
+  <script type="module" src="nuevo-gasto.js"></script>
+
+</body>
+</html>

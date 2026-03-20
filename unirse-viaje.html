@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Unirse a viaje — SplitTrip</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Estilos propios -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+        <div class="brand-icon">
+          <img src="logo-bear-dark.png" alt="SplitTrip" style="width:32px;height:32px;object-fit:contain;filter:invert(1);">
+        </div>
+        <div class="brand-name">
+          SplitTrip
+          <span>Divide · Viaja · Disfruta</span>
+        </div>
+      </a>
+      <button class="navbar-toggler" type="button"
+        data-bs-toggle="collapse" data-bs-target="#mainNav"
+        aria-controls="mainNav" aria-expanded="false" aria-label="Abrir menú">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+          <li class="nav-item"><a class="nav-link fw-semibold" href="dashboard.html">Mi dashboard</a></li>
+          <li class="nav-item">
+            <button class="btn btn-outline-danger btn-sm px-3" id="btnCerrarSesion">Cerrar sesión</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Encabezado -->
+  <div class="dashboard-saludo py-4">
+    <div class="container">
+      <h2 class="fw-bold mb-0">Unirse a un viaje 🔗</h2>
+      <p class="text-muted mb-0 mt-1">Ingresa el código que te compartió el organizador</p>
+    </div>
+  </div>
+
+  <main class="py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+
+          <!-- Formulario de código -->
+          <div class="card border shadow-sm auth-card mb-4">
+            <div class="card-body p-4">
+
+              <h5 class="fw-bold mb-4" style="color:var(--color-primary-dark)">🔑 Código de invitación</h5>
+
+              <form id="formBuscarViaje" novalidate>
+                <div class="mb-3">
+                  <label for="codigo" class="form-label fw-semibold">
+                    Código del viaje <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control input-dark text-center fw-bold"
+                    id="codigo"
+                    placeholder="Ej: A1B2C3D4"
+                    required
+                    maxlength="20"
+                    style="font-size:1.4rem;letter-spacing:6px;text-transform:uppercase;"
+                  >
+                  <p class="hint mt-1">El código es de 8 caracteres y lo encontrarás en el mensaje que te envió el organizador.</p>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" id="btnBuscar">
+                  Buscar viaje
+                </button>
+              </form>
+
+              <div id="mensajeBusqueda" class="mt-3"></div>
+
+            </div>
+          </div>
+
+          <!-- Panel: previa del viaje encontrado (oculto hasta buscar) -->
+          <div id="panelViaje" class="d-none">
+            <div class="card border shadow-sm auth-card">
+              <div class="card-body p-4">
+
+                <h5 class="fw-bold mb-3" style="color:var(--color-primary-dark)">✈️ Viaje encontrado</h5>
+
+                <!-- Info del viaje -->
+                <div class="dashboard-banner rounded-3 p-3 mb-4">
+                  <p class="text-white-50 small mb-1 text-uppercase fw-bold">Nombre del viaje</p>
+                  <p class="text-white fw-bold fs-5 mb-0" id="viajeNombre">—</p>
+                </div>
+
+                <div class="row g-3 mb-4">
+                  <div class="col-6">
+                    <p class="gasto-label">Fecha inicio</p>
+                    <p class="gasto-valor" id="viajeFechaInicio">—</p>
+                  </div>
+                  <div class="col-6">
+                    <p class="gasto-label">Fecha fin</p>
+                    <p class="gasto-valor" id="viajeFechaFin">—</p>
+                  </div>
+                  <div class="col-6">
+                    <p class="gasto-label">Moneda</p>
+                    <p class="gasto-valor" id="viajeMoneda">—</p>
+                  </div>
+                  <div class="col-6">
+                    <p class="gasto-label">Integrantes</p>
+                    <p class="gasto-valor" id="viajeIntegrantes">—</p>
+                  </div>
+                  <div class="col-12">
+                    <p class="gasto-label">Descripción</p>
+                    <p class="gasto-valor" id="viajeDescripcion">—</p>
+                  </div>
+                </div>
+
+                <!-- Botón unirse -->
+                <button class="btn btn-primary w-100 py-2 fw-bold" id="btnUnirse">
+                  ✅ Unirme a este viaje
+                </button>
+
+                <div id="mensajeUnirse" class="mt-3"></div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer mt-5">
+    <div class="footer-bottom text-center py-3">
+      © 2026 SplitTrip — Todos los derechos reservados
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Lógica -->
+  <script type="module" src="unirse-viaje.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registro — SplitTrip</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Estilos propios -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="auth-page">
+
+  <!-- Topbar -->
+  <div class="topbar text-center py-2 px-3">
+    ¿Ya tienes cuenta? &nbsp;<a href="login.html">Inicia sesión aquí</a>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+        <div class="brand-icon">
+          <img src="logo-bear-dark.png" alt="SplitTrip logo" style="width:32px;height:32px;object-fit:contain;border-radius:6px;filter:invert(1);">
+        </div>
+        <div class="brand-name">
+          SplitTrip
+          <span>Divide · Viaja · Disfruta</span>
+        </div>
+      </a>
+      <button class="navbar-toggler" type="button"
+        data-bs-toggle="collapse" data-bs-target="#mainNav"
+        aria-controls="mainNav" aria-expanded="false" aria-label="Abrir menú">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+          <li class="nav-item"><a class="nav-link fw-semibold" href="index.html">Inicio</a></li>
+          <li class="nav-item">
+            <a class="btn btn-outline-primary btn-sm px-3" href="login.html">Iniciar sesión</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="auth-main py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+
+          <!-- Encabezado -->
+          <div class="text-center mb-4">
+            <div class="auth-icon mb-3">
+              <img src="logo-bear-dark.png" alt="SplitTrip" style="width:40px;height:40px;object-fit:contain;filter:invert(1);">
+            </div>
+            <h1 class="section-heading mb-1">Crear cuenta</h1>
+            <p class="text-muted">Empieza a organizar tus viajes grupales gratis</p>
+          </div>
+
+          <!-- Tarjeta del formulario -->
+          <div class="card border shadow-sm auth-card">
+            <div class="card-body p-4">
+
+              <form id="formRegistro" novalidate>
+
+                <!-- Nombre -->
+                <div class="mb-3">
+                  <label for="nombre" class="form-label fw-semibold">
+                    Nombre completo <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control input-dark"
+                    id="nombre"
+                    placeholder="Ej: Juan Pérez"
+                    required
+                    maxlength="100"
+                  >
+                  <div class="invalid-feedback">Por favor ingresa tu nombre completo.</div>
+                </div>
+
+                <!-- Correo -->
+                <div class="mb-3">
+                  <label for="correo" class="form-label fw-semibold">
+                    Correo electrónico <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    class="form-control input-dark"
+                    id="correo"
+                    placeholder="tucorreo@ejemplo.com"
+                    required
+                    maxlength="150"
+                  >
+                  <div class="invalid-feedback">Por favor ingresa un correo válido.</div>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="mb-3">
+                  <label for="telefono" class="form-label fw-semibold">
+                    Teléfono <span class="text-muted fw-normal">(opcional)</span>
+                  </label>
+                  <input
+                    type="tel"
+                    class="form-control input-dark"
+                    id="telefono"
+                    placeholder="Ej: 8888-8888"
+                    maxlength="20"
+                  >
+                </div>
+
+                <!-- Contraseña -->
+                <div class="mb-3">
+                  <label for="password" class="form-label fw-semibold">
+                    Contraseña <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <input
+                      type="password"
+                      class="form-control input-dark"
+                      id="password"
+                      placeholder="Mínimo 6 caracteres"
+                      required
+                      minlength="6"
+                    >
+                    <button class="btn btn-toggle-password" type="button" data-target="password" title="Mostrar/ocultar">
+                      👁
+                    </button>
+                  </div>
+                  <div class="invalid-feedback d-block" id="errorPassword"></div>
+                </div>
+
+                <!-- Confirmar contraseña -->
+                <div class="mb-4">
+                  <label for="confirmarPassword" class="form-label fw-semibold">
+                    Confirmar contraseña <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <input
+                      type="password"
+                      class="form-control input-dark"
+                      id="confirmarPassword"
+                      placeholder="Repite tu contraseña"
+                      required
+                    >
+                    <button class="btn btn-toggle-password" type="button" data-target="confirmarPassword" title="Mostrar/ocultar">
+                      👁
+                    </button>
+                  </div>
+                  <div class="invalid-feedback d-block" id="errorConfirmar"></div>
+                </div>
+
+                <!-- Botón submit -->
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" id="btnRegistrar">
+                  Crear mi cuenta
+                </button>
+
+              </form>
+
+              <!-- Mensaje de resultado -->
+              <div id="mensajeRegistro" class="mt-3"></div>
+
+            </div>
+          </div>
+
+          <!-- Link a login -->
+          <p class="text-center mt-3 text-muted small">
+            ¿Ya tienes cuenta?
+            <a href="login.html" class="fw-bold text-primary">Inicia sesión</a>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer mt-auto">
+    <div class="footer-bottom text-center py-3">
+      © 2026 SplitTrip — Todos los derechos reservados
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Lógica de registro -->
+  <script type="module" src="registro.js"></script>
+
+</body>
+</html>
