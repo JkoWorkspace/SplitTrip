@@ -170,7 +170,7 @@ async function cargarBalances() {
     // Gastos del viaje
     const { data: gastos } = await supabase
       .from("gastos")
-      .select("id_usuario_pagador, monto")
+      .select("id_usuario_pagador, monto, categoria")
       .eq("id_viaje", viaje.id_viaje);
 
     const numIntegrantes = (integrantes || []).length;
@@ -225,6 +225,14 @@ async function cargarBalances() {
       if (acreedor.saldo < 0.01) ai++;
     }
 
+    // Gastos por categoría
+    const gastosPorCategoria = { hospedaje: 0, comida: 0, transporte: 0, actividades: 0, compras: 0, general: 0 };
+    (gastos || []).forEach(g => {
+      if (gastosPorCategoria[g.categoria] !== undefined) {
+        gastosPorCategoria[g.categoria] += parseFloat(g.monto);
+      }
+    });
+
     return {
       id_viaje:    viaje.id_viaje,
       nombre:      viaje.nombre,
@@ -236,7 +244,8 @@ async function cargarBalances() {
       totalViaje,
       porPersona,
       miBalance:   Math.round(miBalance * 100) / 100,
-      deudas
+      deudas,
+      gastosPorCategoria
     };
   });
 
@@ -269,6 +278,154 @@ async function cargarBalances() {
   document.getElementById("spinnerBalances").style.display = "none";
   document.getElementById("contenidoBalances").classList.remove("d-none");
   renderizarBalances(todosBalances);
+  renderizarDashboard(todosBalances);
+}
+
+/* ---- Renderizar dashboard con gráficas ---- */
+function renderizarDashboard(balances) {
+  if (!balances || balances.length === 0) return;
+
+  // Mini stats
+  const totalViajes    = balances.length;
+  const totalGastos    = balances.reduce((s, b) => s + b.totalViaje, 0);
+  const viajesSaldados = balances.filter(b => Math.abs(b.miBalance) < 0.01).length;
+  const viajesPend     = balances.filter(b => Math.abs(b.miBalance) >= 0.01).length;
+
+  document.getElementById("dashViajes").textContent     = totalViajes;
+  document.getElementById("dashGastos").textContent     = "$" + totalGastos.toFixed(0);
+  document.getElementById("dashSaldados").textContent   = viajesSaldados;
+  document.getElementById("dashPendientes").textContent = viajesPend;
+
+  const labels   = balances.map(b => b.nombre.length > 12 ? b.nombre.substring(0,12)+"..." : b.nombre);
+  const colVerde = "rgba(45,106,79,0.8)";
+  const colRojo  = "rgba(192,57,43,0.8)";
+  const colAmbar = "rgba(212,160,23,0.8)";
+
+  const chartDefaults = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: { legend: { labels: { font: { family: "Montserrat", size: 11 }, color: "#1a3d2b" } } },
+    scales: {
+      x: { ticks: { font: { family: "Lato", size: 10 }, color: "#52796f" }, grid: { color: "rgba(0,0,0,0.05)" } },
+      y: { ticks: { font: { family: "Lato", size: 10 }, color: "#52796f" }, grid: { color: "rgba(0,0,0,0.05)" } }
+    }
+  };
+
+  // 1. Gasto total por viaje (barras)
+  new Chart(document.getElementById("chartGastosPorViaje"), {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label: "Total gastado",
+        data: balances.map(b => b.totalViaje.toFixed(2)),
+        backgroundColor: balances.map((_, i) => `rgba(45,106,79,${0.5 + (i * 0.1) % 0.5})`),
+        borderColor: "rgba(45,106,79,1)",
+        borderWidth: 1,
+        borderRadius: 6
+      }]
+    },
+    options: { ...chartDefaults, plugins: { ...chartDefaults.plugins, legend: { display: false } } }
+  });
+
+  // 2. Mi balance por viaje (barras + / -)
+  new Chart(document.getElementById("chartBalancePorViaje"), {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label: "Mi balance",
+        data: balances.map(b => b.miBalance.toFixed(2)),
+        backgroundColor: balances.map(b => b.miBalance >= 0 ? colVerde : colRojo),
+        borderColor: balances.map(b => b.miBalance >= 0 ? "rgba(45,106,79,1)" : "rgba(192,57,43,1)"),
+        borderWidth: 1,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      ...chartDefaults,
+      plugins: { ...chartDefaults.plugins, legend: { display: false } },
+      scales: {
+        ...chartDefaults.scales,
+        y: { ...chartDefaults.scales.y, beginAtZero: false }
+      }
+    }
+  });
+
+  // 3. Distribución: te deben / debes / saldado (dona)
+  const teDeben  = balances.filter(b => b.miBalance > 0.01).length;
+  const debes    = balances.filter(b => b.miBalance < -0.01).length;
+  const saldados = balances.filter(b => Math.abs(b.miBalance) <= 0.01).length;
+
+  new Chart(document.getElementById("chartDistribucion"), {
+    type: "doughnut",
+    data: {
+      labels: ["Te deben", "Debes", "Saldado"],
+      datasets: [{
+        data: [teDeben, debes, saldados],
+        backgroundColor: [colVerde, colRojo, colAmbar],
+        borderWidth: 2,
+        borderColor: "#fff"
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: { legend: { position: "bottom", labels: { font: { family: "Montserrat", size: 11 }, color: "#1a3d2b" } } }
+    }
+  });
+
+  // 4. Categorías acumuladas — necesitamos los gastos de cada viaje
+  // Usamos las deudas simplificadas por categoría si están disponibles
+  // Por ahora calculamos desde los gastos que ya tenemos en todosBalances
+  const catMap = { hospedaje: 0, comida: 0, transporte: 0, actividades: 0, compras: 0, general: 0 };
+  balances.forEach(b => {
+    if (b.gastosPorCategoria) {
+      Object.keys(catMap).forEach(k => { catMap[k] += b.gastosPorCategoria[k] || 0; });
+    }
+  });
+  const catLabels = ["🏨 Hospedaje", "🍽️ Comida", "🚗 Transporte", "🎯 Activ.", "🛍️ Compras", "📦 General"];
+  const catData   = Object.values(catMap);
+  const catColors = ["rgba(45,106,79,0.8)","rgba(82,121,111,0.8)","rgba(116,198,157,0.8)","rgba(212,160,23,0.8)","rgba(192,57,43,0.7)","rgba(26,61,43,0.7)"];
+
+  new Chart(document.getElementById("chartCategorias"), {
+    type: "doughnut",
+    data: {
+      labels: catLabels,
+      datasets: [{ data: catData, backgroundColor: catColors, borderWidth: 2, borderColor: "#fff" }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: { legend: { position: "bottom", labels: { font: { family: "Montserrat", size: 10 }, color: "#1a3d2b" } } }
+    }
+  });
+
+  // 5. Pagado vs. corresponde por viaje (barras apiladas)
+  new Chart(document.getElementById("chartPagadoVsCorresponde"), {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "Lo que pagué",
+          data: balances.map(b => (b.miBalance + b.porPersona).toFixed(2)),
+          backgroundColor: colVerde,
+          borderRadius: 4
+        },
+        {
+          label: "Lo que me corresponde",
+          data: balances.map(b => b.porPersona.toFixed(2)),
+          backgroundColor: colAmbar,
+          borderRadius: 4
+        }
+      ]
+    },
+    options: {
+      ...chartDefaults,
+      plugins: { legend: { position: "bottom", labels: { font: { family: "Montserrat", size: 11 }, color: "#1a3d2b" } } }
+    }
+  });
 }
 
 /* ---- Iniciar ---- */
