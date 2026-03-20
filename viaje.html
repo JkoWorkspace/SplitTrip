@@ -49,7 +49,15 @@
         <h2 class="fw-bold mb-0" id="tituloViaje">Cargando viaje...</h2>
         <p class="text-muted mb-0 mt-1" id="descripcionViaje"></p>
       </div>
-      <div id="badgeEstadoViaje"></div>
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <div id="badgeEstadoViaje"></div>
+        <button class="btn btn-outline-primary btn-sm px-3 fw-bold d-none" id="btnEditarViaje" onclick="abrirModalEditar()">
+          ✏️ Editar viaje
+        </button>
+        <button class="btn btn-outline-danger btn-sm px-3 fw-bold d-none" id="btnCerrarViaje" onclick="confirmarCerrarViaje()">
+          🔒 Cerrar viaje
+        </button>
+      </div>
     </div>
   </div>
 
@@ -197,6 +205,62 @@
         </div>
         <div class="modal-body text-center p-4">
           <img id="imagenFactura" src="" alt="Factura" style="max-width:100%;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: editar viaje -->
+  <div class="modal fade" id="modalEditarViaje" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content auth-card">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold" id="modalEditarLabel" style="color:var(--color-primary-dark)">
+            ✏️ Editar viaje
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body p-4">
+          <form id="formEditarViaje" novalidate>
+            <div class="mb-3">
+              <label for="editNombre" class="form-label fw-semibold">Nombre del viaje <span class="text-danger">*</span></label>
+              <input type="text" class="form-control input-dark" id="editNombre" maxlength="150" required>
+            </div>
+            <div class="mb-3">
+              <label for="editDescripcion" class="form-label fw-semibold">Descripción <span class="text-muted fw-normal">(opcional)</span></label>
+              <textarea class="form-control input-dark" id="editDescripcion" rows="3" maxlength="500"></textarea>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label for="editFechaInicio" class="form-label fw-semibold">Fecha inicio</label>
+                <input type="date" class="form-control input-dark" id="editFechaInicio">
+              </div>
+              <div class="col-6">
+                <label for="editFechaFin" class="form-label fw-semibold">Fecha fin</label>
+                <input type="date" class="form-control input-dark" id="editFechaFin">
+              </div>
+            </div>
+            <div class="mb-4">
+              <label for="editMoneda" class="form-label fw-semibold">Moneda</label>
+              <select class="form-select input-dark" id="editMoneda">
+                <option value="USD">USD — Dólar estadounidense</option>
+                <option value="CRC">CRC — Colón costarricense</option>
+                <option value="EUR">EUR — Euro</option>
+                <option value="MXN">MXN — Peso mexicano</option>
+                <option value="COP">COP — Peso colombiano</option>
+                <option value="ARS">ARS — Peso argentino</option>
+              </select>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary fw-bold px-4 py-2" id="btnGuardarEdicion">
+                Guardar cambios
+              </button>
+              <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                Cancelar
+              </button>
+            </div>
+          </form>
+          <div id="mensajeEdicion" class="mt-3"></div>
         </div>
       </div>
     </div>

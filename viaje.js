@@ -25,6 +25,7 @@ let todosGastos    = [];
 let integrantes    = [];
 let monedaViaje    = "USD";
 let codigoViaje    = "";
+let viajeData      = null;   // datos completos del viaje
 
 /* ---- Helpers ---- */
 function formatearFecha(fecha) {
@@ -264,7 +265,8 @@ async function cargarViaje() {
     return;
   }
 
-  // Llenar info del viaje
+  // Guardar datos del viaje
+  viajeData   = viaje;
   monedaViaje = viaje.moneda;
   codigoViaje = viaje.codigo_invitacion;
 
@@ -305,10 +307,123 @@ async function cargarViaje() {
 
   renderizarGastos(todosGastos);
 
+  // Mostrar botones de editar/cerrar solo si el usuario es el creador
+  if (viaje.id_creador === usuario.id_usuario) {
+    document.getElementById("btnEditarViaje").classList.remove("d-none");
+    if (viaje.estado === "activo") {
+      document.getElementById("btnCerrarViaje").classList.remove("d-none");
+    }
+  }
+
   // Mostrar contenido
   document.getElementById("spinnerViaje").style.display  = "none";
   document.getElementById("contenidoViaje").classList.remove("d-none");
 }
+
+
+/* ---- Abrir modal de editar con datos actuales ---- */
+window.abrirModalEditar = function () {
+  if (!viajeData) return;
+  document.getElementById("editNombre").value       = viajeData.nombre;
+  document.getElementById("editDescripcion").value  = viajeData.descripcion || "";
+  document.getElementById("editFechaInicio").value  = viajeData.fecha_inicio || "";
+  document.getElementById("editFechaFin").value     = viajeData.fecha_fin    || "";
+  document.getElementById("editMoneda").value       = viajeData.moneda;
+  document.getElementById("mensajeEdicion").innerHTML = "";
+  new bootstrap.Modal(document.getElementById("modalEditarViaje")).show();
+};
+
+/* ---- Guardar edición del viaje ---- */
+document.getElementById("formEditarViaje").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  document.getElementById("mensajeEdicion").innerHTML = "";
+
+  const nombre      = document.getElementById("editNombre").value.trim();
+  const descripcion = document.getElementById("editDescripcion").value.trim();
+  const fechaInicio = document.getElementById("editFechaInicio").value || null;
+  const fechaFin    = document.getElementById("editFechaFin").value    || null;
+  const moneda      = document.getElementById("editMoneda").value;
+
+  if (!nombre) {
+    document.getElementById("mensajeEdicion").innerHTML =
+      "<div class='alert alert-warning'>El nombre del viaje es obligatorio.</div>";
+    return;
+  }
+
+  if (fechaInicio && fechaFin && fechaFin < fechaInicio) {
+    document.getElementById("mensajeEdicion").innerHTML =
+      "<div class='alert alert-warning'>La fecha fin no puede ser anterior a la fecha inicio.</div>";
+    return;
+  }
+
+  const btn = document.getElementById("btnGuardarEdicion");
+  btn.disabled = true;
+  btn.textContent = "Guardando...";
+
+  const { error } = await supabase
+    .from("viajes")
+    .update({
+      nombre:      nombre,
+      descripcion: descripcion || null,
+      fecha_inicio: fechaInicio,
+      fecha_fin:   fechaFin,
+      moneda:      moneda
+    })
+    .eq("id_viaje", idViaje);
+
+  if (error) {
+    document.getElementById("mensajeEdicion").innerHTML =
+      "<div class='alert alert-danger'>Error al guardar: " + error.message + "</div>";
+    btn.disabled = false;
+    btn.textContent = "Guardar cambios";
+    return;
+  }
+
+  // Actualizar datos locales y vista
+  viajeData.nombre      = nombre;
+  viajeData.descripcion = descripcion || null;
+  viajeData.fecha_inicio = fechaInicio;
+  viajeData.fecha_fin   = fechaFin;
+  viajeData.moneda      = moneda;
+  monedaViaje           = moneda;
+
+  document.getElementById("tituloViaje").textContent      = nombre;
+  document.getElementById("descripcionViaje").textContent = descripcion || "";
+  document.getElementById("infoFechaInicio").textContent  = formatearFecha(fechaInicio);
+  document.getElementById("infoFechaFin").textContent     = formatearFecha(fechaFin);
+  document.getElementById("infoMoneda").textContent       = moneda;
+
+  document.getElementById("mensajeEdicion").innerHTML =
+    "<div class='alert alert-success'>✅ Viaje actualizado correctamente.</div>";
+
+  btn.disabled = false;
+  btn.textContent = "Guardar cambios";
+
+  setTimeout(() => {
+    bootstrap.Modal.getInstance(document.getElementById("modalEditarViaje")).hide();
+  }, 1500);
+});
+
+/* ---- Cerrar viaje ---- */
+window.confirmarCerrarViaje = function () {
+  if (!confirm("¿Estás seguro de que deseas cerrar este viaje? Ya no se podrán agregar nuevos gastos ni integrantes.")) return;
+
+  supabase
+    .from("viajes")
+    .update({ estado: "cerrado" })
+    .eq("id_viaje", idViaje)
+    .then(({ error }) => {
+      if (error) {
+        alert("Error al cerrar el viaje: " + error.message);
+        return;
+      }
+      viajeData.estado = "cerrado";
+      document.getElementById("badgeEstadoViaje").innerHTML = badgeEstado("cerrado");
+      document.getElementById("btnCerrarViaje").classList.add("d-none");
+      document.getElementById("btnEditarViaje").classList.add("d-none");
+      alert("✅ El viaje fue cerrado exitosamente.");
+    });
+};
 
 /* ---- Iniciar ---- */
 cargarViaje();
