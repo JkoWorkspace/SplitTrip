@@ -170,6 +170,78 @@ function renderizarIntegrantes(data) {
   `).join("");
 }
 
+/* ---- Renderizar divisiones de un gasto ---- */
+function renderizarDivisiones(g) {
+  if (!g.divisiones_gasto || g.divisiones_gasto.length === 0) return "";
+
+  const esPagador = g.id_usuario_pagador === usuario.id_usuario;
+
+  const filas = g.divisiones_gasto.map(d => {
+    const esMiDivision   = d.id_usuario === usuario.id_usuario;
+    const esElPagador    = d.id_usuario === g.id_usuario_pagador;
+    const nombre         = d.usuarios?.nombre || "—";
+    const inicial        = nombre.charAt(0).toUpperCase();
+
+    let badgePago = "";
+    let btnAccion = "";
+
+    if (esElPagador) {
+      // El pagador siempre aparece como "Pagó"
+      badgePago = "<span class='badge-estado badge-pagado' style='font-size:0.7rem;'>💳 Pagó</span>";
+    } else if (d.pagado) {
+      badgePago = "<span class='badge-estado badge-activo' style='font-size:0.7rem;'>✅ Depositó</span>";
+      // El pagador puede revertir
+      if (esPagador) {
+        btnAccion = `<button class="btn btn-sm btn-outline-secondary px-2 py-0" style="font-size:0.72rem;"
+          onclick="marcarPago(${d.id_division}, false, ${g.id_gasto})">Revertir</button>`;
+      }
+    } else {
+      badgePago = "<span class='badge-estado badge-deuda' style='font-size:0.7rem;'>⏳ Pendiente</span>";
+      // El pagador puede confirmar que recibió el depósito
+      if (esPagador) {
+        btnAccion = `<button class="btn btn-sm btn-primary px-2 py-0 fw-bold" style="font-size:0.72rem;"
+          onclick="marcarPago(${d.id_division}, true, ${g.id_gasto})">✓ Ya me depositó</button>`;
+      }
+    }
+
+    return `
+      <div class="d-flex align-items-center gap-2 py-1" style="border-bottom:1px solid var(--color-border);">
+        <div class="cuenta-avatar flex-shrink-0" style="width:28px;height:28px;font-size:0.72rem;
+          background:${esMiDivision ? 'var(--color-primary)' : 'var(--color-secondary)'};">
+          ${inicial}
+        </div>
+        <span class="small fw-semibold flex-grow-1" style="color:var(--color-primary-dark);">
+          ${nombre}${esMiDivision ? " <span style='color:var(--color-secondary);font-weight:400;'>(tú)</span>" : ""}
+        </span>
+        <span class="small fw-bold" style="color:var(--color-primary);min-width:70px;text-align:right;">
+          ${formatearMonto(d.monto_asignado, monedaViaje)}
+        </span>
+        ${badgePago}
+        ${btnAccion}
+      </div>
+    `;
+  }).join("");
+
+  const totalPagado   = g.divisiones_gasto.filter(d => d.pagado).length;
+  const totalPendiente = g.divisiones_gasto.filter(d => !d.pagado).length;
+
+  return `
+    <div class="mt-3 pt-2">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <p class="gasto-label mb-0">División del gasto</p>
+        <small class="text-muted">
+          ✅ ${totalPagado} pagaron · ⏳ ${totalPendiente} pendientes
+        </small>
+      </div>
+      <div style="border:1px solid var(--color-border);border-radius:10px;overflow:hidden;background:var(--color-bg);">
+        <div style="padding:8px 12px;">
+          ${filas}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 /* ---- Renderizar gastos ---- */
 function renderizarGastos(gastos) {
   const container = document.getElementById("listaGastos");
@@ -186,7 +258,7 @@ function renderizarGastos(gastos) {
   }
 
   container.innerHTML = gastos.map(g => `
-    <div class="gasto-card">
+    <div class="gasto-card" id="gasto-${g.id_gasto}">
       <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
         <div>
           <p class="fw-bold mb-0" style="color:var(--color-primary-dark)">${g.descripcion}</p>
@@ -199,7 +271,7 @@ function renderizarGastos(gastos) {
           ${badgeCategoria(g.categoria)}
           ${g.url_factura
             ? `<button class="btn btn-sm btn-outline-primary px-2 py-1 fw-bold"
-                onclick="verFactura('${g.url_factura}', '${g.descripcion.replace(/'/g, "\\'")}')">
+                onclick="verFactura('${g.url_factura}', '${g.descripcion.replace(/'/g, "\'")}')">
                 🧾 Ver factura
                </button>`
             : ""}
@@ -219,6 +291,7 @@ function renderizarGastos(gastos) {
           </p>
         </div>
       </div>
+      ${renderizarDivisiones(g)}
     </div>
   `).join("");
 }
@@ -287,10 +360,10 @@ async function cargarViaje() {
   integrantes = dataInt || [];
   renderizarIntegrantes(integrantes);
 
-  // 3. Gastos con datos del pagador
+  // 3. Gastos con datos del pagador y divisiones
   const { data: dataGastos } = await supabase
     .from("gastos")
-    .select("*, usuarios(nombre)")
+    .select("*, usuarios(nombre), divisiones_gasto(id_division, id_usuario, monto_asignado, pagado, fecha_pago, usuarios(nombre))")
     .eq("id_viaje", idViaje)
     .order("fecha_creacion", { ascending: false });
 
@@ -306,6 +379,7 @@ async function cargarViaje() {
     `Total: ${formatearMonto(total, monedaViaje)} · Cada quien: ${formatearMonto(porPersona, monedaViaje)}`;
 
   renderizarGastos(todosGastos);
+  renderizarDashboard(todosGastos);
 
   // Mostrar botones de editar/cerrar solo si el usuario es el creador
   if (viaje.id_creador === usuario.id_usuario) {
@@ -424,6 +498,199 @@ window.confirmarCerrarViaje = function () {
       alert("✅ El viaje fue cerrado exitosamente.");
     });
 };
+
+/* ---- Marcar/desmarcar pago de una división ---- */
+window.marcarPago = async function (idDivision, pagado, idGasto) {
+  const { error } = await supabase
+    .from("divisiones_gasto")
+    .update({
+      pagado:     pagado,
+      fecha_pago: pagado ? new Date().toISOString() : null
+    })
+    .eq("id_division", idDivision);
+
+  if (error) {
+    alert("Error al actualizar el pago: " + error.message);
+    return;
+  }
+
+  // Actualizar localmente sin recargar toda la página
+  const gasto = todosGastos.find(g => g.id_gasto === idGasto);
+  if (gasto) {
+    const division = gasto.divisiones_gasto.find(d => d.id_division === idDivision);
+    if (division) {
+      division.pagado     = pagado;
+      division.fecha_pago = pagado ? new Date().toISOString() : null;
+    }
+    // Re-renderizar solo esta tarjeta
+    const card = document.getElementById("gasto-" + idGasto);
+    if (card) {
+      const divisionesHTML = card.querySelector(".mt-3.pt-2");
+      const nuevoHTML = renderizarDivisiones(gasto);
+      if (divisionesHTML) {
+        divisionesHTML.outerHTML = nuevoHTML;
+      } else {
+        card.insertAdjacentHTML("beforeend", nuevoHTML);
+      }
+    }
+  }
+};
+
+/* ---- Renderizar dashboard (tabla + gráficas) ---- */
+function renderizarDashboard(gastos) {
+  if (!gastos || gastos.length === 0) {
+    document.getElementById("tablaGastosBody").innerHTML =
+      "<tr><td colspan='6' class='text-center text-muted py-4'>Sin gastos registrados aún.</td></tr>";
+    return;
+  }
+
+  const iconoCat = {
+    hospedaje: "🏨", comida: "🍽️", transporte: "🚗",
+    actividades: "🎯", compras: "🛍️", general: "📦"
+  };
+
+  // ---- Tabla ----
+  const filas = gastos.map(g => {
+    const divisiones = g.divisiones_gasto || [];
+    const chips = divisiones.map(d => {
+      const nombre = d.usuarios?.nombre || "—";
+      const esElPagador = d.id_usuario === g.id_usuario_pagador;
+      if (esElPagador) {
+        return `<span class="pago-chip pago-chip-pago">💳 ${nombre}</span>`;
+      } else if (d.pagado) {
+        return `<span class="pago-chip pago-chip-ok">✅ ${nombre}</span>`;
+      } else {
+        return `<span class="pago-chip pago-chip-pend">⏳ ${nombre}</span>`;
+      }
+    }).join("");
+
+    const totalPagaron  = divisiones.filter(d => d.pagado).length;
+    const totalPendient = divisiones.filter(d => !d.pagado && d.id_usuario !== g.id_usuario_pagador).length;
+    const porPersona    = integrantes.length > 0 ? g.monto / integrantes.length : 0;
+
+    return `
+      <tr>
+        <td>
+          <span class="fw-bold" style="color:var(--color-primary-dark);">${g.descripcion}</span>
+          <br><small class="text-muted">${formatearFecha(g.fecha)}</small>
+        </td>
+        <td>${iconoCat[g.categoria] || "📦"} ${g.categoria}</td>
+        <td>
+          <span class="fw-bold" style="color:var(--color-primary);">
+            ${formatearMonto(g.monto, monedaViaje)}
+          </span>
+        </td>
+        <td>${formatearMonto(porPersona, monedaViaje)}</td>
+        <td>
+          <div class="d-flex align-items-center gap-2">
+            <div class="cuenta-avatar" style="width:28px;height:28px;font-size:0.72rem;flex-shrink:0;">
+              ${(g.usuarios?.nombre || "?").charAt(0).toUpperCase()}
+            </div>
+            <span class="fw-semibold">${g.usuarios?.nombre || "—"}</span>
+          </div>
+        </td>
+        <td>
+          <div class="d-flex flex-wrap gap-1">
+            ${chips}
+          </div>
+          <small class="text-muted d-block mt-1">
+            ✅ ${totalPagaron} · ⏳ ${totalPendient} pendientes
+          </small>
+        </td>
+      </tr>
+    `;
+  }).join("");
+
+  document.getElementById("tablaGastosBody").innerHTML = filas;
+
+  // ---- Gráfica 1: Gastos por categoría (dona) ----
+  const catMap = { hospedaje: 0, comida: 0, transporte: 0, actividades: 0, compras: 0, general: 0 };
+  gastos.forEach(g => {
+    if (catMap[g.categoria] !== undefined) catMap[g.categoria] += parseFloat(g.monto);
+  });
+  const catLabels  = Object.keys(catMap).map(k => iconoCat[k] + " " + k);
+  const catData    = Object.values(catMap);
+  const catColors  = ["#2d6a4f","#52796f","#74c69d","#d4a017","#c0392b","#1a3d2b"];
+
+  const ctx1 = document.getElementById("chartCategoriasViaje");
+  if (ctx1._chartInstance) ctx1._chartInstance.destroy();
+  ctx1._chartInstance = new Chart(ctx1, {
+    type: "doughnut",
+    data: {
+      labels: catLabels,
+      datasets: [{ data: catData, backgroundColor: catColors, borderWidth: 2, borderColor: "#fff" }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: "bottom", labels: { font: { size: 10 }, color: "#1a3d2b" } } }
+    }
+  });
+
+  // ---- Gráfica 2: Pagado por integrante (barras) ----
+  const pagadoMap = {};
+  integrantes.forEach(i => { pagadoMap[i.id_usuario] = { nombre: i.usuarios.nombre, monto: 0 }; });
+  gastos.forEach(g => {
+    if (pagadoMap[g.id_usuario_pagador]) {
+      pagadoMap[g.id_usuario_pagador].monto += parseFloat(g.monto);
+    }
+  });
+  const pagadoLabels = Object.values(pagadoMap).map(p => p.nombre);
+  const pagadoData   = Object.values(pagadoMap).map(p => p.monto.toFixed(2));
+
+  const ctx2 = document.getElementById("chartPagadoPorIntegrante");
+  if (ctx2._chartInstance) ctx2._chartInstance.destroy();
+  ctx2._chartInstance = new Chart(ctx2, {
+    type: "bar",
+    data: {
+      labels: pagadoLabels,
+      datasets: [{
+        label: "Pagado",
+        data: pagadoData,
+        backgroundColor: pagadoLabels.map((_, i) => `rgba(45,106,79,${0.5 + (i * 0.15) % 0.5})`),
+        borderRadius: 6,
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { font: { size: 10 }, color: "#52796f" }, grid: { display: false } },
+        y: { ticks: { font: { size: 10 }, color: "#52796f" }, grid: { color: "rgba(0,0,0,0.05)" } }
+      }
+    }
+  });
+
+  // ---- Gráfica 3: Estado de pagos global (dona) ----
+  let totalPagados   = 0;
+  let totalPendiente = 0;
+  gastos.forEach(g => {
+    (g.divisiones_gasto || []).forEach(d => {
+      if (d.id_usuario === g.id_usuario_pagador) return; // el pagador no cuenta
+      if (d.pagado) totalPagados++;
+      else totalPendiente++;
+    });
+  });
+
+  const ctx3 = document.getElementById("chartEstadoPagos");
+  if (ctx3._chartInstance) ctx3._chartInstance.destroy();
+  ctx3._chartInstance = new Chart(ctx3, {
+    type: "doughnut",
+    data: {
+      labels: ["✅ Depositaron", "⏳ Pendientes"],
+      datasets: [{
+        data: [totalPagados, totalPendiente],
+        backgroundColor: ["#2d6a4f", "#f9c74f"],
+        borderWidth: 2,
+        borderColor: "#fff"
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: "bottom", labels: { font: { size: 10 }, color: "#1a3d2b" } } }
+    }
+  });
+}
 
 /* ---- Iniciar ---- */
 cargarViaje();
