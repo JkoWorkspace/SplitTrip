@@ -257,7 +257,9 @@ function renderizarGastos(gastos) {
     return;
   }
 
-  container.innerHTML = gastos.map(g => `
+  container.innerHTML = gastos.map(g => {
+    const esPagadorDelGasto = parseInt(g.id_usuario_pagador) === parseInt(usuario.id_usuario);
+    return `
     <div class="gasto-card" id="gasto-${g.id_gasto}">
       <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
         <div>
@@ -275,6 +277,16 @@ function renderizarGastos(gastos) {
                 🧾 Ver factura
                </button>`
             : ""}
+          ${esPagadorDelGasto ? `
+            <button class="btn btn-sm btn-outline-warning px-2 py-1 fw-bold"
+              onclick="abrirEditarGasto(${g.id_gasto})">
+              ✏️ Editar
+            </button>
+            <button class="btn btn-sm btn-outline-danger px-2 py-1 fw-bold"
+              onclick="confirmarEliminarGasto(${g.id_gasto}, '${g.descripcion.replace(/'/g, "\'")}')">
+              🗑️ Eliminar
+            </button>
+          ` : ""}
         </div>
       </div>
       <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
@@ -293,7 +305,7 @@ function renderizarGastos(gastos) {
       </div>
       ${renderizarDivisiones(g)}
     </div>
-  `).join("");
+  `}).join("");
 }
 
 /* ---- Filtros por categoría ---- */
