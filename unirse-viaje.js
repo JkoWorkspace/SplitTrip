@@ -111,6 +111,61 @@ formBuscar.addEventListener("submit", async function (e) {
   btnUnirse.textContent = "✅ Unirme a este viaje";
 });
 
+/* ---- Recalcular divisiones de todos los gastos al unirse ---- */
+async function recalcularDivisiones(idViaje, idUsuarioNuevo) {
+  // 1. Obtener todos los integrantes actuales (incluyendo el que se acaba de unir)
+  const { data: integrantes } = await supabase
+    .from("integrantes_viaje")
+    .select("id_usuario")
+    .eq("id_viaje", idViaje);
+
+  if (!integrantes || integrantes.length === 0) return;
+
+  const numIntegrantes = integrantes.length;
+  const idsIntegrantes = integrantes.map(i => i.id_usuario);
+
+  // 2. Obtener todos los gastos del viaje
+  const { data: gastos } = await supabase
+    .from("gastos")
+    .select("id_gasto, monto, id_usuario_pagador")
+    .eq("id_viaje", idViaje);
+
+  if (!gastos || gastos.length === 0) return;
+
+  // 3. Para cada gasto, recalcular divisiones
+  for (const gasto of gastos) {
+    const montoPorPersona = Math.round((parseFloat(gasto.monto) / numIntegrantes) * 100) / 100;
+
+    // Obtener divisiones existentes
+    const { data: divisionesExistentes } = await supabase
+      .from("divisiones_gasto")
+      .select("id_division, id_usuario, pagado")
+      .eq("id_gasto", gasto.id_gasto);
+
+    const idsConDivision = (divisionesExistentes || []).map(d => d.id_usuario);
+
+    // Actualizar monto de divisiones existentes
+    for (const div of (divisionesExistentes || [])) {
+      await supabase
+        .from("divisiones_gasto")
+        .update({ monto_asignado: montoPorPersona })
+        .eq("id_division", div.id_division);
+    }
+
+    // Insertar división para el nuevo integrante si no existe
+    if (!idsConDivision.includes(idUsuarioNuevo)) {
+      await supabase
+        .from("divisiones_gasto")
+        .insert([{
+          id_gasto:       gasto.id_gasto,
+          id_usuario:     idUsuarioNuevo,
+          monto_asignado: montoPorPersona,
+          pagado:         false
+        }]);
+    }
+  }
+}
+
 /* ---- Unirse al viaje ---- */
 document.getElementById("btnUnirse").addEventListener("click", async function () {
   if (!viajeEncontrado) return;
@@ -132,6 +187,9 @@ document.getElementById("btnUnirse").addEventListener("click", async function ()
     this.textContent = "✅ Unirme a este viaje";
     return;
   }
+
+  // Recalcular divisiones de todos los gastos del viaje
+  await recalcularDivisiones(viajeEncontrado.id_viaje, usuario.id_usuario);
 
   document.getElementById("mensajeUnirse").innerHTML =
     "<div class='alert alert-success'>🎉 ¡Te uniste exitosamente! Redirigiendo al viaje...</div>";

@@ -692,5 +692,123 @@ function renderizarDashboard(gastos) {
   });
 }
 
+/* ---- Abrir modal de editar gasto ---- */
+window.abrirEditarGasto = function (idGasto) {
+  const g = todosGastos.find(x => x.id_gasto === idGasto);
+  if (!g) return;
+
+  document.getElementById("editGastoId").value          = g.id_gasto;
+  document.getElementById("editGastoDescripcion").value = g.descripcion;
+  document.getElementById("editGastoMonto").value       = g.monto;
+  document.getElementById("editGastoCategoria").value   = g.categoria;
+  document.getElementById("editGastoFecha").value       = g.fecha;
+  document.getElementById("mensajeEditarGasto").innerHTML = "";
+
+  new bootstrap.Modal(document.getElementById("modalEditarGasto")).show();
+};
+
+/* ---- Guardar edición del gasto ---- */
+document.getElementById("formEditarGasto").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  document.getElementById("mensajeEditarGasto").innerHTML = "";
+
+  const idGasto    = parseInt(document.getElementById("editGastoId").value);
+  const descripcion = document.getElementById("editGastoDescripcion").value.trim();
+  const monto      = parseFloat(document.getElementById("editGastoMonto").value);
+  const categoria  = document.getElementById("editGastoCategoria").value;
+  const fecha      = document.getElementById("editGastoFecha").value;
+
+  if (!descripcion || isNaN(monto) || monto <= 0 || !fecha) {
+    document.getElementById("mensajeEditarGasto").innerHTML =
+      "<div class='alert alert-warning'>Por favor completa todos los campos correctamente.</div>";
+    return;
+  }
+
+  const btn = document.getElementById("btnGuardarEditarGasto");
+  btn.disabled = true;
+  btn.textContent = "Guardando...";
+
+  // Actualizar el gasto
+  const { error } = await supabase
+    .from("gastos")
+    .update({ descripcion, monto, categoria, fecha })
+    .eq("id_gasto", idGasto);
+
+  if (error) {
+    document.getElementById("mensajeEditarGasto").innerHTML =
+      "<div class='alert alert-danger'>Error al guardar: " + error.message + "</div>";
+    btn.disabled = false;
+    btn.textContent = "Guardar cambios";
+    return;
+  }
+
+  // Recalcular divisiones con el nuevo monto
+  const montoPorPersona = Math.round((monto / integrantes.length) * 100) / 100;
+
+  const { data: divisiones } = await supabase
+    .from("divisiones_gasto")
+    .select("id_division")
+    .eq("id_gasto", idGasto);
+
+  for (const d of (divisiones || [])) {
+    await supabase
+      .from("divisiones_gasto")
+      .update({ monto_asignado: montoPorPersona })
+      .eq("id_division", d.id_division);
+  }
+
+  // Actualizar localmente
+  const idx = todosGastos.findIndex(g => g.id_gasto === idGasto);
+  if (idx !== -1) {
+    todosGastos[idx].descripcion = descripcion;
+    todosGastos[idx].monto       = monto;
+    todosGastos[idx].categoria   = categoria;
+    todosGastos[idx].fecha       = fecha;
+  }
+
+  document.getElementById("mensajeEditarGasto").innerHTML =
+    "<div class='alert alert-success'>✅ Gasto actualizado correctamente.</div>";
+
+  btn.disabled = false;
+  btn.textContent = "Guardar cambios";
+
+  setTimeout(() => {
+    bootstrap.Modal.getInstance(document.getElementById("modalEditarGasto")).hide();
+    renderizarGastos(todosGastos);
+    // Actualizar total
+    const total = todosGastos.reduce((s, g) => s + parseFloat(g.monto), 0);
+    document.getElementById("infoTotalGastos").textContent = formatearMonto(total, monedaViaje);
+    const porPersona = integrantes.length > 0 ? total / integrantes.length : 0;
+    document.getElementById("resumenBalance").textContent =
+      `Total: ${formatearMonto(total, monedaViaje)} · Cada quien: ${formatearMonto(porPersona, monedaViaje)}`;
+  }, 1200);
+});
+
+/* ---- Confirmar y eliminar gasto ---- */
+window.confirmarEliminarGasto = async function (idGasto, descripcion) {
+  if (!confirm(`¿Estás seguro de que deseas eliminar el gasto "${descripcion}"? Esta acción no se puede deshacer.`)) return;
+
+  const { error } = await supabase
+    .from("gastos")
+    .delete()
+    .eq("id_gasto", idGasto);
+
+  if (error) {
+    alert("Error al eliminar el gasto: " + error.message);
+    return;
+  }
+
+  // Remover localmente y re-renderizar
+  todosGastos = todosGastos.filter(g => g.id_gasto !== idGasto);
+  renderizarGastos(todosGastos);
+
+  // Actualizar total
+  const total = todosGastos.reduce((s, g) => s + parseFloat(g.monto), 0);
+  document.getElementById("infoTotalGastos").textContent = formatearMonto(total, monedaViaje);
+  const porPersona = integrantes.length > 0 ? total / integrantes.length : 0;
+  document.getElementById("resumenBalance").textContent =
+    `Total: ${formatearMonto(total, monedaViaje)} · Cada quien: ${formatearMonto(porPersona, monedaViaje)}`;
+};
+
 /* ---- Iniciar ---- */
 cargarViaje();
